@@ -2143,7 +2143,7 @@ function saveCollapsed() { try { localStorage.setItem("ff14jp-collapsed", JSON.s
 
 var state = { tab: "", cat: "", q: "" };
 var colsPref = {"t0c0":5,"t0c1":6,"t0c2":5,"t0c3":4,"t0c4":4,"t0c5":4,"t0c10":4,"t0c12":4,"t0c13":4,"t0c14":4,"t0c17":4,"t0c19":7,"t1c0":7,"t1c1":7,"t1c3":7,"t1c4":5,"t1c5":6,"t1c6":7,"t1c7":7,"t1c9":6,"t1c10":4,"t1c11":7,"t1c12":6,"t1c13":6,"t1c14":4,"t1c15":6,"t1c16":7,"t1c17":5,"t1c18":6,"t1c19":7,"t1c20":7,"t1c21":5,"t1c22":6,"t1c25":6,"t1c26":7,"t1c27":6,"t1c28":6,"t1c29":6,"t1c30":6,"t1c31":6,"t2c0":6,"t2c1":7,"t2c2":7,"t2c3":7,"t2c4":6,"t2c5":5,"t2c6":7,"t2c8":7,"t2c9":7,"t2c10":7,"t3c0":7,"t3c1":7,"t3c2":7,"t3c3":7,"t4c0":7,"t5c2":4,"t5c3":4,"t5c4":4,"t5c5":4,"t5c6":4,"t5c7":4,"t5c8":4,"t5c9":4,"t5c10":4,"t5c11":4,"t5c12":4,"t5c13":4,"t5c14":4,"t5c15":4,"t5c16":4,"t5c17":4,"t5c18":4,"t5c19":4};
-try { colsPref = JSON.parse(localStorage.getItem("ff14jp-cols-cache") || "{}") || {}; } catch (e) { colsPref = {}; }
+/* 고정 칸 수 (사이트 설정에서 가져옴) */
 function cacheCols() { try { localStorage.setItem("ff14jp-cols-cache", JSON.stringify(colsPref)); } catch (e) {} }
 var dbState = "wait";
 function curCols(c) {

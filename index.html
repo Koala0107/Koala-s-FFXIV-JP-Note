@@ -5134,7 +5134,7 @@ var dbTimer = 0;
     };
     function stPrev() {
       if (!pOvC) return; ovPos(); pOvC.clearRect(0, 0, PW, PH); var fn = pStampFn(pStamp);
-      if (fn) { pOvC.save(); pOvC.globalAlpha = 0.5; pStampDraw(pOvC, fn, PW / 2, PH / 2, P_ST_SZ[pStampGrp(pStamp)]); pOvC.restore(); }
+      if (fn) { pOvC.save(); pStampDraw(pOvC, fn, PW / 2, PH / 2, P_ST_SZ[pStampGrp(pStamp)]); pOvC.restore(); }
       clearTimeout(szT); szT = setTimeout(function () { pOvC.clearRect(0, 0, PW, PH); }, 2500);
     }
     szw.appendChild(szIn); szw.appendChild(szV);
@@ -5227,7 +5227,7 @@ var dbTimer = 0;
       /* 방금 찍은 자리에서는 미리보기를 숨김(맨 위에 떠 보이지 않게) */
       if (pStHold) { if (Math.abs(pt[0] - pStHold[0]) + Math.abs(pt[1] - pStHold[1]) < 40) return; pStHold = null; }
       clearTimeout(szT); ovPos(); pOvC.clearRect(0, 0, PW, PH); var fn = pStampFn(pStamp);
-      if (fn) { pOvC.save(); pOvC.globalAlpha = 0.55; pStampDraw(pOvC, fn, pt[0], pt[1], P_ST_SZ[pStampGrp(pStamp)]); pOvC.restore(); }
+      if (fn) { pOvC.save(); pStampDraw(pOvC, fn, pt[0], pt[1], P_ST_SZ[pStampGrp(pStamp)]); pOvC.restore(); }
     });
     pCv.addEventListener("pointerleave", function () { pOvC.clearRect(0, 0, PW, PH); });
     pCv.addEventListener("pointerdown", function (e) {

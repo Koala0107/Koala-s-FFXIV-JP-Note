@@ -4119,26 +4119,40 @@ var dbTimer = 0;
   var BGM_KEY = "ff14jp-rainbow-bgm", BGM_VOL = "ff14jp-rainbow-vol", bgmAudio = null, bgmRow = null, bgmBtn = null;
   function bgmVol() { var v = 15; try { var x = localStorage.getItem(BGM_VOL); if (x !== null && !isNaN(+x)) v = +x; } catch (e) {} return Math.max(0, Math.min(100, v)); }
   function bgmWanted() { var v = null; try { v = localStorage.getItem(BGM_KEY); } catch (e) {} return rbOn && v !== "0"; }
-  function bgmMake() { if (!bgmAudio) { bgmAudio = new Audio(); bgmAudio.preload = "auto"; bgmAudio.loop = true; bgmAudio.src = "bgm-8bit-win.mp3"; try { bgmAudio.load(); } catch (e) {} } return bgmAudio; }
+  /* 노래 파일을 통째로 미리 받아 메모리에 두고 재생 (클릭하자마자 바로 나오게) */
+  var bgmReady = false, bgmWant = false;
+  function bgmUseSrc(u) { bgmAudio.src = u; try { bgmAudio.load(); } catch (e) {} }
+  function bgmMake() {
+    if (bgmAudio) return bgmAudio;
+    bgmAudio = new Audio(); bgmAudio.preload = "auto"; bgmAudio.loop = true;
+    bgmAudio.addEventListener("canplaythrough", function () { bgmReady = true; if (bgmWant) bgmGo(); });
+    var done = false, fb = function () { if (done) return; done = true; bgmUseSrc("bgm-8bit-win.mp3"); };
+    try {
+      fetch("bgm-8bit-win.mp3").then(function (r) { if (!r.ok) throw 0; return r.blob(); }).then(function (bl) { if (done) return; done = true; bgmUseSrc(URL.createObjectURL(bl)); }, fb);
+      setTimeout(fb, 8000);
+    } catch (e) { fb(); }
+    return bgmAudio;
+  }
+  function bgmGo() {
+    bgmWant = false;
+    bgmAudio.volume = bgmVol() / 100;
+    try { bgmAudio.currentTime = 0; } catch (e) {}
+    var pr = bgmAudio.play(); if (pr && pr.catch) pr.catch(function () {});
+  }
   function bgmPlay() {
     if (!bgmWanted()) return;
     bgmMake();
-    bgmAudio.volume = bgmVol() / 100;
-    bgmAudio.currentTime = 0;
-    var pr = bgmAudio.play(); if (pr && pr.catch) pr.catch(function () {});
+    if (bgmReady) bgmGo(); else bgmWant = true;
   }
-  function bgmStop() { if (bgmAudio) { bgmAudio.pause(); } }
+  function bgmStop() { bgmWant = false; if (bgmAudio) { bgmAudio.pause(); } }
   /* 브라우저는 첫 클릭 전에는 소리를 못 내서, 첫 조작 때 시작 */
   (function () {
     function first() { document.removeEventListener("pointerdown", first, true); document.removeEventListener("keydown", first, true); bgmPlay(); }
     if (!bgmWanted()) return;
     /* 미리 받아 두기: 첫 조작 때 바로 나오게 */
     bgmMake();
-    /* 브라우저가 허락하면 바로 시작, 막히면 첫 조작 때 시작 */
-    bgmAudio.volume = bgmVol() / 100;
-    var pr = bgmAudio.play();
-    if (pr && pr.then) pr.then(function () {}, function () { document.addEventListener("pointerdown", first, true); document.addEventListener("keydown", first, true); });
-    else { document.addEventListener("pointerdown", first, true); document.addEventListener("keydown", first, true); }
+    /* 첫 조작 때 시작 (브라우저가 그 전에는 소리를 막음) */
+    document.addEventListener("pointerdown", first, true); document.addEventListener("keydown", first, true);
   })();
   function bgmRender() {
     if (!bgmRow) return;

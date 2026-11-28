@@ -859,7 +859,7 @@ html:not(.tool-editing) .row.u-hid { pointer-events: none; }
         <button class="tool-ic tool-empty" type="button" disabled aria-hidden="true" tabindex="-1"></button>
         <button class="tool-ic tool-edit" id="toolEdit" type="button" title="버튼 위치 편집" aria-label="버튼 위치 편집" aria-pressed="false"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 3v18M3 12h18M12 3l-2.5 2.5M12 3l2.5 2.5M12 21l-2.5-2.5M12 21l2.5-2.5M3 12l2.5-2.5M3 12l2.5 2.5M21 12l-2.5-2.5M21 12l-2.5 2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       </div>
-      <div class="hdr-time"><div class="clocks" aria-label="시계"><div class="clk" title="실제 시간 (Local Time)"><span class="clk-l">LT<span class="clk-kr">(현실)</span></span><span class="clk-v" id="clkLT"><span class="clk-ap"></span><span class="clk-t">--:--:--</span></span></div><div class="clk et" title="에오르제아 시간 (Eorzea Time)"><span class="clk-l">ET<span class="clk-kr">(게임)</span></span><span class="clk-v" id="clkET"><span class="clk-ap"></span><span class="clk-t">--:--:--</span></span></div><div class="clk tmr-clk" id="tmrClk" title="타이머 열기"><span class="clk-l" id="tmrL">타이머</span><span class="clk-v"><span class="clk-t" id="tmrT">00:00</span></span></div><div class="clk tmr-clk" id="swClk" title="스톱워치 열기"><span class="clk-l">스톱워치</span><span class="clk-v"><span class="clk-t" id="swT">00:00</span></span></div></div><div class="clocks resets" aria-label="리셋까지 남은 시간"><div class="clk" title="듀티 룰렛 등: 매일 한국 시간 밤 12시"><span class="clk-l">일일리셋(밤12시)</span><span class="clk-v"><span class="clk-t" id="rstD">--:--:--</span></span></div><div class="clk" title="매일 한국 시간 낮 5시"><span class="clk-l">일일리셋(낮5시)</span><span class="clk-v"><span class="clk-t" id="rstD5">--:--:--</span></span></div><div class="clk" title="주간 리셋: 매주 화요일 한국 시간 오후 5시"><span class="clk-l">주간리셋</span><span class="clk-v"><span class="clk-t" id="rstW">--:--:--</span></span></div></div></div>
+      <div class="hdr-time"><div class="clocks" aria-label="시계"><div class="clk" title="실제 시간 (Local Time)"><span class="clk-l">LT<span class="clk-kr">(현실)</span></span><span class="clk-v" id="clkLT"><span class="clk-ap"></span><span class="clk-t">--:--:--</span></span></div><div class="clk et" title="에오르제아 시간 (Eorzea Time)"><span class="clk-l">ET<span class="clk-kr">(게임)</span></span><span class="clk-v" id="clkET"><span class="clk-ap"></span><span class="clk-t">--:--:--</span></span></div><div class="clk tmr-clk" id="tmrClk" title="타이머 열기"><span class="clk-l" id="tmrL">타이머</span><span class="clk-v"><span class="clk-t" id="tmrT">00:00:00</span></span></div><div class="clk tmr-clk" id="swClk" title="스톱워치 열기"><span class="clk-l">스톱워치</span><span class="clk-v"><span class="clk-t" id="swT">00:00:00</span></span></div></div><div class="clocks resets" aria-label="리셋까지 남은 시간"><div class="clk" title="듀티 룰렛 등: 매일 한국 시간 밤 12시"><span class="clk-l">일일리셋(밤12시)</span><span class="clk-v"><span class="clk-t" id="rstD">--:--:--</span></span></div><div class="clk" title="매일 한국 시간 낮 5시"><span class="clk-l">일일리셋(낮5시)</span><span class="clk-v"><span class="clk-t" id="rstD5">--:--:--</span></span></div><div class="clk" title="주간 리셋: 매주 화요일 한국 시간 오후 5시"><span class="clk-l">주간리셋</span><span class="clk-v"><span class="clk-t" id="rstW">--:--:--</span></span></div></div></div>
       
       <button class="tab" id="editToggle" type="button" aria-pressed="false" hidden>편집</button>
     </div>
@@ -5268,11 +5268,8 @@ var dbTimer = 0;
     if (!S.sw.laps) S.sw.laps = [];
     function save() { try { localStorage.setItem(TKEY, JSON.stringify(S)); } catch (e) {} }
     function pad(n) { return (n < 10 ? "0" : "") + n; }
-    function fmt(ms, cs) {
-      ms = Math.max(0, ms); var t = Math.floor(ms / 1000), h = Math.floor(t / 3600), m = Math.floor(t / 60) % 60, s = t % 60;
-      var r = (h ? h + ":" + pad(m) : pad(m)) + ":" + pad(s);
-      return cs ? r + "." + pad(Math.floor(ms / 10) % 100) : r;
-    }
+    function fmt(ms) { return fmtH(ms); }
+    function fmtH(ms) { ms = Math.max(0, ms); var t = Math.floor(ms / 1000); return pad(Math.floor(t / 3600)) + ":" + pad(Math.floor(t / 60) % 60) + ":" + pad(t % 60); }
     function ap12(t) { var h = +t.slice(0, 2), m = t.slice(3); return (h < 12 ? "오전 " : "오후 ") + (h % 12 || 12) + ":" + m; }
     function swMs() { return S.sw.acc + (S.sw.run ? Date.now() - S.sw.start : 0); }
     function tmMs() { return S.tm.run ? S.tm.end - Date.now() : S.tm.left; }
@@ -5315,8 +5312,8 @@ var dbTimer = 0;
       if (tBtn) { var on = S.al.some(function (a) { return a.on; }); tBtn.classList.toggle("tmr-alarm", on); tBtn.title = on ? "타이머 (알림 켜짐)" : "타이머"; }
       if (!tT) return;
       var tmOn = S.tm.dur > 0 && (S.tm.run || S.tm.left > 0);
-      tT.textContent = tmOn ? fmt(Math.ceil(tmMs() / 1000) * 1000) : "00:00"; tClk.classList.toggle("is-run", S.tm.run);
-      if (sT) { sT.textContent = fmt(swMs()); sClk.classList.toggle("is-run", S.sw.run); }
+      tT.textContent = tmOn ? fmtH(Math.ceil(tmMs() / 1000) * 1000) : "00:00:00"; tClk.classList.toggle("is-run", S.tm.run);
+      if (sT) { sT.textContent = fmtH(swMs()); sClk.classList.toggle("is-run", S.sw.run); }
     }
     /* 알림 확인(1초마다) */
     function today() { var d = new Date(); return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(); }
@@ -5371,7 +5368,7 @@ var dbTimer = 0;
       dlg.box.appendChild(tabs);
       /* 스톱워치 */
       var p0 = el("div", "tmr-pane");
-      swDisp = el("div", "tmr-disp", "00:00.00"); p0.appendChild(swDisp);
+      swDisp = el("div", "tmr-disp", "00:00:00"); p0.appendChild(swDisp);
       var r0 = el("div", "tmr-btns");
       swStart = mkB("시작", "tmr-go", function () { dingCtx(); if (S.sw.run) return; S.sw.start = Date.now(); S.sw.run = true; save(); renderSw(); hdr(); });
       swLap = mkB("멈추기", "", function () { if (!S.sw.run) return; S.sw.acc += Date.now() - S.sw.start; S.sw.run = false; save(); renderSw(); hdr(); });
@@ -5379,7 +5376,7 @@ var dbTimer = 0;
       r0.appendChild(swStart); r0.appendChild(swLap); r0.appendChild(swReset); p0.appendChild(r0);
       /* 타이머 */
       var p1 = el("div", "tmr-pane");
-      tmDisp = el("div", "tmr-disp", "00:00"); p1.appendChild(tmDisp);
+      tmDisp = el("div", "tmr-disp", "00:00:00"); p1.appendChild(tmDisp);
       tmSet = el("div", "tmr-set");
       var inRow = el("div", "tmr-in");
       tmHr = document.createElement("input"); tmHr.type = "number"; tmHr.min = "0"; tmHr.max = "99"; tmHr.value = "0"; tmHr.setAttribute("aria-label", "시");

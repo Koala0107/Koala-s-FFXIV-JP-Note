@@ -4147,12 +4147,20 @@ var dbTimer = 0;
   function bgmStop() { bgmWant = false; if (bgmAudio) { bgmAudio.pause(); } }
   /* 브라우저는 첫 클릭 전에는 소리를 못 내서, 첫 조작 때 시작 */
   (function () {
-    function first() { document.removeEventListener("pointerdown", first, true); document.removeEventListener("keydown", first, true); bgmPlay(); }
+    function off() { document.removeEventListener("pointerdown", first, true); document.removeEventListener("keydown", first, true); }
+    function first() { off(); if (bgmAudio && !bgmAudio.paused) return; bgmPlay(); }
     if (!bgmWanted()) return;
     /* 미리 받아 두기: 첫 조작 때 바로 나오게 */
     bgmMake();
-    /* 첫 조작 때 시작 (브라우저가 그 전에는 소리를 막음) */
+    /* 다 받으면 바로 틀어 보고, 브라우저가 막으면 첫 조작 때 시작 */
     document.addEventListener("pointerdown", first, true); document.addEventListener("keydown", first, true);
+    var tried = false;
+    bgmAudio.addEventListener("canplaythrough", function () {
+      if (tried || !bgmWanted() || !bgmAudio.paused) return; tried = true;
+      bgmAudio.volume = bgmVol() / 100;
+      var pr = bgmAudio.play();
+      if (pr && pr.then) pr.then(off, function () {});
+    });
   })();
   function bgmRender() {
     if (!bgmRow) return;
